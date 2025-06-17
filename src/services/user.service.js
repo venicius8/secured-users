@@ -1,5 +1,5 @@
 const User = require("../models/user.js");
-const bcrypt = require("bcrypt");
+const argon2 = require("argon2");
 const { validationResult } = require("express-validator");
 
 const createUser = async (req, res) => {
@@ -14,7 +14,7 @@ const createUser = async (req, res) => {
     if (existingUser) return res.status(409).json({ message: "Usuário existente" });
 
     try {
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await argon2.hash(password);
 
         const user = await new User({
             email,
@@ -26,6 +26,7 @@ const createUser = async (req, res) => {
         res.json({ message: "Usuário criado com sucesso" });
     } catch (err) {
         res.status(500).json({ message: "Houve um erro no servidor" });
+        console.error("Ocorreu um erro no createUser: " + err.stack);
     }
 };
 
@@ -41,12 +42,13 @@ const logUser = async (req, res) => {
         const existingUser = await User.findOne({ email });
         if (!existingUser) return res.status(401).json({ message: "Credenciais inválidas" });
     
-        const result = await bcrypt.compare(password, existingUser.password);
+        const result = await argon2.verify(existingUser.password, password);
         if (!result) return res.status(401).json({ message: "Credenciais inválidas" });
 
         res.json({ message: "Login realizado com sucesso" });
     } catch (err) {
         res.status(500).json({ message: "Houve um erro no servidor" });
+        console.error("Ocorreu um erro no logUser: " + err.stack);
     }
 };
 
