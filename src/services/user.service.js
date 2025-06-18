@@ -3,21 +3,21 @@ const argon2 = require("argon2");
 const { validationResult } = require("express-validator");
 
 const createUser = async (req, res) => {
-    const { email, password } = req.body;
+    const { nickname, password } = req.body;
     
-    if (!email || !password) return res.status(400).json({ message: "Email e senha são obrigatórios"});
+    if (!nickname || !password) return res.status(400).json({ message: "Nickname e senha são obrigatórios"});
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ nickname });
     if (existingUser) return res.status(409).json({ message: "Usuário existente" });
 
     try {
         const hashedPassword = await argon2.hash(password);
 
         const user = await new User({
-            email,
+            nickname,
             password: hashedPassword,
         });
 
@@ -31,15 +31,15 @@ const createUser = async (req, res) => {
 };
 
 const logUser = async (req, res) => {
-    const { email, password } = req.body;
+    const { nickname, password } = req.body;
 
-    if (!email || !password) return res.status(400).json({ message: "Email e senha são obrigatórios"});
+    if (!nickname || !password) return res.status(400).json({ message: "Nickname e senha são obrigatórios"});
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
     try {
-        const existingUser = await User.findOne({ email });
+        const existingUser = await User.findOne({ nickname });
         if (!existingUser) return res.status(401).json({ message: "Credenciais inválidas" });
     
         const result = await argon2.verify(existingUser.password, password);
