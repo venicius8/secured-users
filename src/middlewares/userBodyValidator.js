@@ -1,6 +1,6 @@
 const { body } = require("express-validator");
 
-const bodyValidator = [
+const userBodyValidator = [
     body("nickname")
         .trim()
         .toLowerCase()
@@ -10,8 +10,9 @@ const bodyValidator = [
         .withMessage("Nickname deve ser alfanumérico"),
         
     body("password")
+        .trim()
         .isLength({ min: 8, max: 20 })
         .withMessage("Senha deve ter entre 8 a 20 caracteres"),
 ];
 
-module.exports = bodyValidator;
+module.exports = userBodyValidator;
