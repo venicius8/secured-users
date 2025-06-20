@@ -4,6 +4,7 @@ const authRoutes = require("./routes/auth.route.js");
 const connectDB = require("./config/db.js");
 const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
+const connectRedis = require("./config/redis.js");
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(helmet());
 app.use(mongoSanitize());
 
 connectDB();
+connectRedis();
 
 app.use("/api/auth", (err, req, res, next) => {
     if (err.status == 400) return res.status(400).json({ message: "JSON inválido" });
