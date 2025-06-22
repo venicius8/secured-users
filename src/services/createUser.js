@@ -1,4 +1,4 @@
-const User = require("../models/user.js");
+const User = require("../models/User.js");
 const argon2 = require("argon2");
 const Redis = require("ioredis");
 const redis = new Redis({

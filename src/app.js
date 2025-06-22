@@ -9,6 +9,7 @@ const connectRedis = require("./config/redis.js");
 const app = express();
 
 app.use(express.json());
+app.set('trust proxy', 1);
 app.use(helmet());
 app.use(mongoSanitize());
 
