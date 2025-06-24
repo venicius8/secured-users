@@ -11,7 +11,7 @@ const app = express();
 app.use(express.json());
 app.set('trust proxy', 1);
 app.use(helmet());
-app.use(mongoSanitize());
+app.use(mongoSanitize({ replaceWith: '_' }));
 
 connectDB();
 connectRedis();
